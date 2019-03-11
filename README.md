@@ -7,8 +7,8 @@
 __What happens__
 1.  A T2.Micro is configured and setup
 2.  Security group is created and assigned to the ec2 instance allowing port 80 and 22. ( I would remove port 22 from the external side )
-3.  IAM Policy,Role,Profile, all get created and assigned to the ec2 instance.
-4.  S3 Bucket get created
+3.  IAM Policy, Role, Profile, all get created and assigned to the ec2 instance.
+4.  S3 Bucket is created
 
 __Things to note.__
  *There are some variables that will be specific to the environment.  (aws_region, aws_profile, vpc_id, subnet_id are examples)*
@@ -23,11 +23,12 @@ I had the thought process of very minimal infrastructure was already in place. J
 If I was to do this with some more existing infrastructure, like a docker repo , I would have utilized/created  a docker image with all the necessary configs and source files to deploy.
 Or if there was a configuration management solution (Puppet, SaltStack), I would put some of the config management there.
 
-I made use of both the "userdata" and the terraform "provisioner" options here. I chose the provisioner to upload the "payload" with all the files needed to configure apache.
+I made use of both the "userdata" and the terraform "provisioner" options here. I chose the provisioner to upload the "payload" with all the files needed to configure apache. The used the userdata to install apache, place the files in /var/www/html and substantiate the crontab.
 
 1.  .htaccess file to make sure apache doesn't cache in this case.
 2.  index.html to serve up the page and images
 3.  The script cron calls to rotate the images. (See Code below)
+4.  The cat images themselves.
 
 
 __rotate_image.sh__
@@ -42,4 +43,12 @@ while [ ${rand} = 0 ]
   done
 img_name=cat${rand}.jpg
 cp ${img_loc}/${img_name} ${img_liv}
-echo " ${img_name} on `date` " >> /tmp/rotate.log```
+echo " ${img_name} on `date` " >> /tmp/rotate.log
+```
+
+
+__Another Option__
+
+One other way I might have gone down...
+I could use the s3 bucket to host the cat images and just made a call to retrieve the image from the s3 bucket by the rotate_image script.
+This would entail me to have a set of creds on the ec2 instance to auth for this, unless I made it public. If it was company data, then private of coarse. :)
