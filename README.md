@@ -51,4 +51,4 @@ __Another Option__
 
 One other way I might have gone down...
 I could use the s3 bucket to host the cat images and just made a call to retrieve the image from the s3 bucket by the rotate_image script.
-This would entail me to have a set of creds on the ec2 instance to auth for this, unless I made it public. If it was company data, then private of coarse. :)
+This would entail me to have a set of creds on the ec2 instance to auth for this, unless I made it public. If it was company data, then private of course. :)
